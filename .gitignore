@@ -212,13 +212,7 @@ __marimo__/
 # ============================================================
 
 # --- Data & Large Files ---
-# data/raw/
-# *.csv
-# *.tsv
-# *.xlsx
-# *.pdf
-# *.zip
-# *.tar.gz
+data/raw/
 
 # --- Personal Lab Files ---
 lab/
