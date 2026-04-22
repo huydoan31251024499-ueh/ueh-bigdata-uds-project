@@ -33,7 +33,7 @@ The implementation schedule is detailed as follows:
 1.   **Data Engineering (Prepare & Process)**: Setup a **Docker** cluster and ingest **UDS** and meteorological datasets into **HDFS**. Execute data cleaning protocols, including **UTC timezone normalization** and structural validation.
 2.   **Analytics Framework (Analyze)**: Perform **Spatial Joins** between delivery coordinates and flood zone mapping. Engineer features such as `is_heavy_rain` and establish correlation baselines for weather-impacted logistics.
 3.   **Visualization & Storytelling (Share)**: Map delivery heatmaps with tidal charts to visualize logistical bottlenecks. Articulate the **UDS 2025 divestment** through data-driven insights and trend analysis.
-4.   **Optimization & Strategic Proposal (Act)**: Fine-tune **PySpark** jobs for computational efficiency. Finalize the GitHub repository and documentation, providing actionable recommendations based on identified root causes.
+4.   **Optimization & Strategic Proposal (Act)**: Fine-tune **PySpark** jobs for computational efficiency. Finalize the GitHub repository and documentation, reports, providing actionable recommendations based on identified root causes.
 
 ## 5. Setup Instructions
 To maintain a consistent environment, run the provided Docker Compose configuration:
