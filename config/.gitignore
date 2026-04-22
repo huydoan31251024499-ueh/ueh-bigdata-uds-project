@@ -212,19 +212,17 @@ __marimo__/
 # ============================================================
 
 # --- Data & Large Files ---
-data/raw/
-*.csv
-*.tsv
-*.xlsx
-*.pdf
-*.zip
-*.tar.gz
+# data/raw/
+# *.csv
+# *.tsv
+# *.xlsx
+# *.pdf
+# *.zip
+# *.tar.gz
 
 # --- Personal Lab Files ---
 lab/
-notebooks/DataFrames.ipynb
-notebooks/GettingStartedwithPythonandPandas-v1.ipynb
-notebooks/SparkIntro.ipynb
+notebooks/IBM_*
 
 # --- MacOS Specific ---
 .DS_Store
