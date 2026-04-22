@@ -8,8 +8,8 @@ Last-mile delivery efficiency in HCMC drops significantly during extreme weather
 ## 2. Data Ecosystem (The 5Vs)
 The project represents a comprehensive Big Data ecosystem by integrating structured, semi-structured, and unstructured sources:
 
-*   **Logistics (Structured):** ~2,404 successful order records including `senderLat/Lng`, `receiverLat/Lng`, item categories, etc.
-*   **Weather (Semi-structured):** ~26,019 rows of historical data from Visual Crossing and real-time updates from OpenWeatherMap API and Kaggle datasets; traffic conditions and real-time ETAs from Google APIs.
+*   **Logistics (Structured):** ~2,404 successful order records including `senderLat/Lng`, `receiverLat/Lng`, item categories, etc; ~17,544 rows of historical data from `meteostat` library.
+*   **Weather (Semi-structured):** Real-time updates from OpenWeatherMap API and Kaggle datasets; traffic conditions and real-time ETAs from Google APIs.
 *   **Local Infrastructure (Unstructured/Crawl):** Flood points and traffic congestion logs from the HCMC Portal of Transportation and the National Center for Hydro-Meteorological Forecasting (NCHMF).
 
 **Big Data Characteristics:**
