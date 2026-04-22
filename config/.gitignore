@@ -221,7 +221,8 @@ data/raw/
 *.tar.gz
 
 # --- Personal Lab Files ---
-lab/
+lab/lab0*_31251024499*
+lab/WHO-COVID-19-20210601-213841.tsv
 
 # --- MacOS Specific ---
 .DS_Store
