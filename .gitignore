@@ -212,11 +212,11 @@ __marimo__/
 # ============================================================
 
 # --- Data & Large Files ---
-data/raw/
+# data/raw/
 
 # --- Personal Lab Files ---
 lab/
-notebooks/IBM_*
+notebooks/
 
 # --- MacOS Specific ---
 .DS_Store
