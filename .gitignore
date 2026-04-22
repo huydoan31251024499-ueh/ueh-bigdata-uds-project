@@ -221,8 +221,10 @@ data/raw/
 *.tar.gz
 
 # --- Personal Lab Files ---
-lab/lab0*_31251024499*
-lab/WHO-COVID-19-20210601-213841.tsv
+lab/
+notebooks/DataFrames.ipynb
+notebooks/GettingStartedwithPythonandPandas-v1.ipynb
+notebooks/SparkIntro.ipynb
 
 # --- MacOS Specific ---
 .DS_Store
