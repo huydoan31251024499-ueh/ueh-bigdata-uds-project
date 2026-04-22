@@ -43,7 +43,7 @@ df = spark.read.csv("hdfs://namenode:9000/user/data/uds-orders.csv",
                         header=True, 
                         schema=schema)
 
-### Tính toán cơ bản
+### Tính toán cơ bản với DataFrame và Spark SQL
 df.show()
 print(f"Total orders: {df.count()}")
 df.selectExpr("avg(shippingDistance) as avg_distance").show()
