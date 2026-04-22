@@ -10,7 +10,7 @@ The project represents a comprehensive Big Data ecosystem by integrating structu
 
 *   **Logistics (Structured):** ~2,404 successful order records including `senderLat/Lng`, `receiverLat/Lng`, item categories, etc.
 *   **Weather (Semi-structured):** ~26,019 rows of historical data from Visual Crossing and real-time updates from OpenWeatherMap API and Kaggle datasets; traffic conditions and real-time ETAs from Google APIs.
-*   **Local Infrastructure (Unstructured/Crawl):** Flood points and traffic congestion logs from the HCMC Portal of Transportation.
+*   **Local Infrastructure (Unstructured/Crawl):** Flood points and traffic congestion logs from the HCMC Portal of Transportation and the National Center for Hydro-Meteorological Forecasting.
 
 **Big Data Characteristics:**
 *   **Volume:** Millions of potential logs when scaled across the HCMC transport network.
