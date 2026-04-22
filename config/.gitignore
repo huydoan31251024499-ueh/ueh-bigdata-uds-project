@@ -205,3 +205,24 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# ============================================================
+# UDS PROJECT & PERSONAL LAB CUSTOM CONFIG
+# ============================================================
+
+# --- Data & Large Files ---
+data/raw/
+*.csv
+*.tsv
+*.xlsx
+*.pdf
+*.zip
+*.tar.gz
+
+# --- Personal Lab Files ---
+lab/
+
+# --- MacOS Specific ---
+.DS_Store
+Thumbs.db
