@@ -1,0 +1,63 @@
+services:
+  # --- HADOOP (HDFS & YARN) ---
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    restart: always
+    ports:
+      - "9870:9870" # NameNode Web UI
+      - "9000:9000" # HDFS RPC
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+      - ./:/app
+    environment:
+      - CLUSTER_NAME=uds_cluster
+    env_file:
+      - ./hadoop.env
+    platform: linux/amd64
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    restart: always
+    ports:
+      - "9864:9864"
+      - "9866:9866"
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+    platform: linux/amd64
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    ports:
+      - "8088:8088" # YARN Web UI
+    env_file:
+      - ./hadoop.env
+    platform: linux/amd64
+
+  # --- SPARK ---
+  spark-master:
+    image: apache/spark:3.5.1
+    container_name: spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "8080:8080" # Spark Master Web UI
+      - "7077:7077" # Spark Cluster URL
+    volumes:
+      - ./:/app
+
+  spark-worker:
+    image: apache/spark:3.5.1
+    container_name: spark-worker
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    volumes:
+      - ./:/app
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:

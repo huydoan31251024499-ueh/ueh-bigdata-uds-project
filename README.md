@@ -31,7 +31,7 @@ The system is built on a distributed framework optimized for **Apple Silicon (Ma
 Aligned with the **Google Data Analytics Framework**, this project is structured into six phases (**Ask, Prepare, Process, Analyze, Share, Act**) executed over a **four-week** duration. The initiative commences with the formulation of **SMART** questions to define stakeholder requirements and organizational objectives, followed by an evaluation of data integrity, ethics, and infrastructure.
 The implementation schedule is detailed as follows:
 1.   **Data Engineering (Prepare & Process)**: Setup a **Docker** cluster and ingest **UDS** and meteorological datasets into **HDFS**. Execute data cleaning protocols, including **UTC timezone normalization** and structural validation.
-2.   **Analytics Framework (Analyze)**: Perform **Spatial Joins** between delivery coordinates and flood zone mapping. Engineer features such as `is_heavy_rain` and establish correlation baselines for weather-impacted logistics.
+2.   **Analytics Framework (Analyze)**: Perform **Spatial Joins** between delivery coordinates and flood zone mapping. Engineer features such as `is_extreme_weather` and establish correlation baselines for weather-impacted logistics.
 3.   **Visualization & Storytelling (Share)**: Map delivery heatmaps with tidal charts to visualize logistical bottlenecks. Articulate the **UDS 2025 divestment** through data-driven insights and trend analysis.
 4.   **Optimization & Strategic Proposal (Act)**: Fine-tune **PySpark** jobs for computational efficiency. Finalize the GitHub repository and documentation, providing actionable recommendations based on identified root causes.
 
