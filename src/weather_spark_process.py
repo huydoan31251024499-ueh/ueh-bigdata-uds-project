@@ -54,7 +54,7 @@ def get_condition_mapping():
 def transform_weather(spark, weather_path):
     """
     Transform raw weather data:
-    - Parse Asia/Ho_Chi_Minh timestamps (already converted in raw ingestion)
+    - Convert UTC timestamps to UTC+7 (Asia/Ho_Chi_Minh)
     - Add weather condition labels
     - Clean null values in precipitation
     - Rename columns with units
@@ -83,10 +83,10 @@ def transform_weather(spark, weather_path):
         print("Sample weather data:")
         weather_df.show(3, truncate=False)
         
-        # Parse timestamp (already in Asia/Ho_Chi_Minh from raw ingestion, not UTC)
+        # Convert timestamp from UTC to UTC+7 (Asia/Ho_Chi_Minh)
         weather_df = weather_df.withColumn(
             "timestamp",
-            to_timestamp(col("timestamp"))
+            from_utc_timestamp(col("timestamp"), "Asia/Ho_Chi_Minh")
         )
         
         # Create condition label mapping
@@ -134,6 +134,7 @@ def transform_orders(spark, orders_path):
     """
     Transform orders data:
     - Read UDS orders with lenient parsing
+    - Convert all timestamps from UTC to UTC+7 (Asia/Ho_Chi_Minh)
     - Round createdAt to nearest hour for joining
     """
     print("Reading UDS orders...")
@@ -150,17 +151,29 @@ def transform_orders(spark, orders_path):
         print("Sample orders data:")
         orders_df.show(3, truncate=False)
         
-        # Parse expectedDeliveryTime if it's a string (handle both timestamp and string formats)
+        # Parse and convert createdAt from UTC to UTC+7 (Asia/Ho_Chi_Minh)
         orders_df = orders_df.withColumn(
-            "expectedDeliveryTime",
-            to_timestamp(col("expectedDeliveryTime"))
+            "createdAt",
+            from_utc_timestamp(to_timestamp(col("createdAt")), "Asia/Ho_Chi_Minh")
         )
         
-        # Round expectedDeliveryTime to nearest hour (use unix timestamp arithmetic)
+        # Parse and convert deliveredAt from UTC to UTC+7 (Asia/Ho_Chi_Minh)
+        orders_df = orders_df.withColumn(
+            "deliveredAt",
+            from_utc_timestamp(to_timestamp(col("deliveredAt")), "Asia/Ho_Chi_Minh")
+        )
+        
+        # Parse and convert expectedDeliveryTime from UTC to UTC+7 (Asia/Ho_Chi_Minh)
+        orders_df = orders_df.withColumn(
+            "expectedDeliveryTime",
+            from_utc_timestamp(to_timestamp(col("expectedDeliveryTime")), "Asia/Ho_Chi_Minh")
+        )
+        
+        # Round deliveredAt to nearest hour (use unix timestamp arithmetic) - now in UTC+7
         orders_df = orders_df.withColumn(
             "hour_timestamp",
             from_unixtime(
-                round(unix_timestamp(col("expectedDeliveryTime")) / 3600) * 3600
+                round(unix_timestamp(col("deliveredAt")) / 3600) * 3600
             ).cast("timestamp")
         )
         
