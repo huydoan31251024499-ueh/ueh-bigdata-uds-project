@@ -15,7 +15,7 @@ APP_PATH := /app
 LOCAL_SCRIPTS := ./src
 REMOTE_SCRIPTS := $(APP_PATH)/src
 
-SCRIPT_NAME ?= weather_spark_process.py
+SCRIPT_NAME ?= process_weather_spark.py
 SPARK_MASTER_URL := spark://$(SPARK_MASTER):7077
 
 # ============================================================================
@@ -113,6 +113,7 @@ shell:
 # ============================================================================
 
 # Copy script to spark-master and run spark-submit
+# If run a different script: make submit SCRIPT_NAME=get_weather_prepare.py
 submit:
 	@if [ ! -f "$(LOCAL_SCRIPTS)/$(SCRIPT_NAME)" ]; then \
 		echo "❌ Error: Script not found: $(LOCAL_SCRIPTS)/$(SCRIPT_NAME)"; \
