@@ -150,17 +150,17 @@ def transform_orders(spark, orders_path):
         print("Sample orders data:")
         orders_df.show(3, truncate=False)
         
-        # Parse createdAt if it's a string (handle both timestamp and string formats)
+        # Parse expectedDeliveryTime if it's a string (handle both timestamp and string formats)
         orders_df = orders_df.withColumn(
-            "createdAt",
-            to_timestamp(col("createdAt"))
+            "expectedDeliveryTime",
+            to_timestamp(col("expectedDeliveryTime"))
         )
         
-        # Round createdAt to nearest hour (use unix timestamp arithmetic)
+        # Round expectedDeliveryTime to nearest hour (use unix timestamp arithmetic)
         orders_df = orders_df.withColumn(
             "hour_timestamp",
             from_unixtime(
-                round(unix_timestamp(col("createdAt")) / 3600) * 3600
+                round(unix_timestamp(col("expectedDeliveryTime")) / 3600) * 3600
             ).cast("timestamp")
         )
         
