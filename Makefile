@@ -61,21 +61,21 @@ help:
 
 # Start all containers
 up:
-	@echo "⬆️  Starting Docker containers..."
+	@echo "Starting Docker containers..."
 	$(DOCKER_COMPOSE) up -d
-	@echo "✓ Containers started"
+	@echo "Containers started"
 	@sleep 3
 	@make status
 
 # Stop all containers
 down:
-	@echo "⬇️  Stopping Docker containers..."
+	@echo "Stopping Docker containers..."
 	$(DOCKER_COMPOSE) down
-	@echo "✓ Containers stopped"
+	@echo "Containers stopped"
 
 # Restart containers (graceful restart)
 restart: down
-	@echo "🔄 Restarting containers..."
+	@echo "Restarting containers..."
 	@sleep 2
 	make up
 
@@ -100,7 +100,7 @@ logs:
 # Generic shell target: make shell node=container_name
 shell:
 	@if [ -z "$(node)" ]; then \
-		echo "❌ Error: node parameter required"; \
+		echo "Error: node parameter required"; \
 		echo "Usage: make shell node=namenode"; \
 		echo "       make shell node=spark-master"; \
 		exit 1; \
@@ -116,12 +116,12 @@ shell:
 # If run a different script: make submit SCRIPT_NAME=get_weather_prepare.py
 submit:
 	@if [ ! -f "$(LOCAL_SCRIPTS)/$(SCRIPT_NAME)" ]; then \
-		echo "❌ Error: Script not found: $(LOCAL_SCRIPTS)/$(SCRIPT_NAME)"; \
+		echo "Error: Script not found: $(LOCAL_SCRIPTS)/$(SCRIPT_NAME)"; \
 		exit 1; \
 	fi
-	@echo "📤 Copying $(SCRIPT_NAME) to $(SPARK_MASTER)..."
+	@echo "Copying $(SCRIPT_NAME) to $(SPARK_MASTER)..."
 	docker cp $(LOCAL_SCRIPTS)/$(SCRIPT_NAME) $(SPARK_MASTER):$(REMOTE_SCRIPTS)/
-	@echo "▶️  Running spark-submit on $(SPARK_MASTER)..."
+	@echo "Running spark-submit on $(SPARK_MASTER)..."
 	docker exec $(SPARK_MASTER) /opt/spark/bin/spark-submit \
 		--master $(SPARK_MASTER_URL) \
 		--deploy-mode client \
@@ -134,5 +134,5 @@ submit:
 
 # Clean up containers and temporary files
 clean: down
-	@echo "🧹 Cleaning up..."
-	@echo "✓ Containers stopped and removed"
+	@echo "Cleaning up..."
+	@echo "Containers stopped and removed"

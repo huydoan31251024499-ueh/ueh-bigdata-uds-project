@@ -323,6 +323,18 @@ def main():
         print("=" * 70)
         final_df.printSchema()
         
+
+        # Save final output to HDFS as Parquet
+        output_path = "hdfs://namenode:9000/user/doanquochuy/uds-project/data/processed/weather_orders_joined.parquet"
+        final_df.write.mode("overwrite").parquet(output_path)
+        print(f"\nFinal output saved to: {output_path}")
+
+        # For local testing, save to local filesystem:
+        local_path = "file:///app/data/processed/weather_orders_joined.csv"
+        final_df.coalesce(1).write.mode("overwrite").option("header", "true").csv(local_path)        
+        print(f"\nFinal output saved to: {local_path}")
+
+
     except Exception as e:
         print(f"Error in PySpark job: {e}")
         raise
