@@ -213,7 +213,6 @@ __marimo__/
 
 # --- Data & Large Files ---
 # data/raw/
-docs/
 Makefile
 
 # --- Personal Lab Files ---
