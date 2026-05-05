@@ -5,7 +5,7 @@ Tài liệu này tổng hợp toàn bộ các câu lệnh cần thiết để v�
 ---
 
 ## 1. QUẢN LÝ HỆ THỐNG (DOCKER LIFECYCLE)
-Sử dụng các lệnh này để "dựng" hoặc "tắt" cụm máy chủ Hadoop/Spark.
+Sử dụng các lệnh này để "bật" hoặc "tắt" cụm máy chủ Hadoop/Spark.
 
 | Lệnh | Ý nghĩa |
 | :--- | :--- |
@@ -14,12 +14,12 @@ Sử dụng các lệnh này để "dựng" hoặc "tắt" cụm máy chủ Hado
 | `docker-compose logs -f` | **Xem Log:** Theo dõi quá trình vận hành để phát hiện lỗi. |
 | `docker-compose down` | **Tắt máy:** Dừng và xóa các container để giải phóng RAM cho máy. |
 
-> **💡 Note:** Luôn chạy `docker-compose up -d` ngay khi bắt đầu làm bài và `down` khi đã làm xong để máy không bị lag.
+> **Note:** Luôn chạy `docker-compose up -d` ngay khi bắt đầu làm bài và `down` khi đã làm xong để máy không bị lag.
 
 ---
 
 ## 2. THAO TÁC DỮ LIỆU TRÊN HDFS (HADOOP STORAGE)
-Dữ liệu thô phải được đẩy vào "kho" HDFS thì Spark mới xử lý được.
+Dữ liệu thô phải được đẩy vào "kho" HDFS thì Spark để xử lý được.
 
 * **Tạo thư mục làm việc trên Hadoop:**
     ```bash
@@ -66,12 +66,3 @@ Sử dụng `spark-submit` để gửi file Python của bạn vào cụm Spark 
     ```bash
     git push origin main
     ```
-
----
-
-## ⚠️ CÁC LỖI THƯỜNG GẶP (TROUBLESHOOTING)
-
-1.  **Lỗi 'Docker not found':** Đảm bảo bạn đã mở ứng dụng Docker Desktop lên trước khi gõ lệnh.
-2.  **Lỗi 'Port 8080/9870 is already allocated':** Có thể bạn đang chạy một ứng dụng khác trùng cổng. Hãy tắt các ứng dụng đó hoặc dùng `docker-compose down` rồi khởi động lại.
-3.  **Lỗi quyền truy cập (Permission denied):** Nếu gõ lệnh Git bị lỗi, hãy dùng `git config` để khai báo Email UEH như hướng dẫn trước đó.
-
