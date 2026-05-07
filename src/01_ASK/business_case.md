@@ -1,4 +1,4 @@
-**1.1 Lý do chọn đề tài:**
+## 1.1 Lý do chọn đề tài:
 
 Trong bối cảnh thị trường logistics Việt Nam đang bước vào giai đoạn cạnh tranh khốc liệt,
 các startup như Xe Dù (Molotov/UDS) phải đối mặt với áp lực kép: vừa duy trì chi phí vận
@@ -17,7 +17,7 @@ UDS”.
 
 ---
 
-**1.2 Business Task**
+## 1.2 Business Task
 
 Bài toán kinh doanh: "Xe Dù" (Molotov/UDS) là một startup logistics tại TP.HCM đối mặt với
 sự sụt giảm hiệu suất vận hành nghiêm trọng khi thời tiết xấu. Cụ thể, khi lượng mưa tăng cao, tỷ lệ hủy đơn tăng mạnh, thời gian giao hàng thực tế vượt xa ETA cam kết vì Shipper bị kẹt tại các "điểm đen" ngập lụt, gây tốn kém nhiên liệu và chi phí cơ hội, giảm sự hài lòng của khách hàng; và thu nhập của tài xế giảm do không thể hoàn thành đủ số chuyến dẫn đến tình trạng tài xế rời bỏ nền tảng. 
@@ -33,7 +33,7 @@ xế hạn chế, từ đó xây dựng một hệ thống logistics có khả n
 | **Khách hàng cuối** | Người dùng dịch vụ | ETA chính xác, giao hàng đúng hẹn |
 
 ---
-**1.3 Xác định câu hỏi SMART**
+## 1.3 Xác định câu hỏi SMART
 Đặt 3 câu hỏi mục tiêu về: Tỷ lệ hủy đơn, Thu nhập tài xế và Quãng đường vận chuyển tối
 ưu.
 
@@ -74,7 +74,7 @@ có thể hoàn thành trong ca.
 - T (Thời hạn): Mùa mưa 2024 - sử dụng dữ liệu lịch sử để huấn luyện mô hình
 dự báo.
 ---
-**TỔNG HỢP TÀI LIỆU THAM KHẢO**
+## TỔNG HỢP TÀI LIỆU THAM KHẢO
 
 **2.1 Tác động định lượng của thời tiết đến vận tải và logistics**
 FHWA - Road Weather Management (Cục Quản lý Đường cao tốc Liên bang Hoa Kỳ):
