@@ -1,5 +1,7 @@
 # Instruction: Giai đoạn PREPARE (Chuẩn bị dữ liệu)
 
+**Status:** 🟡 In Progress (Huy đã làm xong mẫu Orders & Weather, các bạn cần bổ sung **Điểm ngập & API thời tiết & Giao thông & Giá thị trường**).
+
 ## I. Mục tiêu
 Xây dựng dữ liệu đầu vào chất lượng cho dự án. Nhiệm vụ chính là kết hợp dữ liệu vận hành nội bộ với các nguồn dữ liệu mở (Open Data) của TP.HCM để trả lời 3 câu hỏi SMART về: **Tỷ lệ hủy đơn, Thu nhập tài xế và Quãng đường tối ưu.**
 
@@ -22,7 +24,7 @@ Xây dựng dữ liệu đầu vào chất lượng cho dự án. Nhiệm vụ c
 
 ---
 
-## 🚀 III. Hướng dẫn thực hiện cho thành viên
+## III. Hướng dẫn thực hiện cho thành viên
 
 ### **Bước 1: Khai thác API & Crawl**
 * Sử dụng Python (`requests`, `BeautifulSoup`) để lấy dữ liệu từ các nguồn trên.
@@ -38,15 +40,13 @@ Xây dựng dữ liệu đầu vào chất lượng cho dự án. Nhiệm vụ c
 
 ---
 
-## 📦 IV. Sản phẩm bàn giao (Outputs)
+## IV. Sản phẩm bàn giao (Outputs)
 Sau khi kết thúc giai đoạn này, folder `02_PREPARE` phải có:
 1.  **Script code:** Các file `.py` dùng để crawl hoặc gọi API.
 2.  **Dữ liệu thô:** Các file CSV/JSON mới thu thập được.
 3.  **Data Dictionary:** File Markdown mô tả ý nghĩa các cột dữ liệu mới để người làm bước **PROCESS** tiếp quản.
 
 ---
-
-**Status:** 🟡 In Progress (Huy đã làm xong mẫu Orders & Weather, các bạn cần bổ sung Điểm ngập & Giá thị trường).
 
 
 
