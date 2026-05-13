@@ -1,3 +1,5 @@
+# Giai đoạn ASK (Lĩnh vực và Doanh nghiệp)
+
 ## 1.1 Lý do chọn đề tài:
 
 Trong bối cảnh thị trường logistics Việt Nam đang bước vào giai đoạn cạnh tranh khốc liệt,
@@ -37,30 +39,27 @@ xế hạn chế, từ đó xây dựng một hệ thống logistics có khả n
 Đặt 3 câu hỏi mục tiêu về: Tỷ lệ hủy đơn, Thu nhập tài xế và Quãng đường vận chuyển tối
 ưu.
 
-**1. Làm thế nào để giảm 20% tỷ lệ hủy đơn trong các khung giờ mưa trên 5mm cho toàn bộ các khu vực có nguy cơ ngập lụt cao bằng cách tự động điều chỉnh ETA trong 3 tháng tới?**
-- S (Cụ thể): Giảm tỷ lệ hủy đơn - KPI cốt lõi ảnh hưởng trực tiếp đến doanh
-    thu và uy tín thương hiệu.
-- M (Đo lường được): Tỷ lệ hủy đơn theo khung giờ, đối chiếu với dữ liệu
-    lượng mưa từ OpenWeatherMap API.
-- A (Khả thi): Tập trung vào khu vực có mật độ đơn hàng cao nhất và
-    dữ liệu ngập lụt đầy đủ từ Sở GTVT TP.HCM.
-- R (Phù hợp): Trực tiếp giải quyết vấn đề kinh doanh cốt lõi của Molotov.
-- T (Thời hạn): 3 tháng - một chu kỳ đủ dài để thu thập dữ liệu mùa mưa và
-    đánh giá hiệu quả can thiệp.
+**1. Làm thế nào để dự báo chính xác thời gian giao hàng thực tế và giảm ít nhất 20% độ trễ so với ETA cam kết (delay_min) trong các khung giờ mưa lớn (lượng mưa > 5mm) tại các khu vực có nguy cơ ngập lụt cao ở TP.HCM trong vòng 3 tháng tới, thông qua việc tự động điều chỉnh ETA dựa trên dữ liệu thời tiết, giao thông và ngập lụt?**
+
+- Specific: tập trung vào delay_min, ETA, mưa > 5mm, vùng ngập
+- Measurable: giảm 20% độ trễ trung bình
+- Achievable: có prcp_mm, traffic_congestion_index, flood_*, shippingDistance
+- Relevant: giảm hủy đơn gián tiếp, tăng hài lòng khách hàng
+- Time-bound: 3 tháng
   
-**2. Việc áp dụng chính sách giá linh động (tài xế tăng thu nhập, ưu đãi) dựa trên chỉ số ngập lụt thời gian thực có thể giúp giảm tỷ lệ huỷ đơn và tăng sự hài lòng của khách hàng thế nào?**
+**2. Mối quan hệ giữa lượng mưa, mức độ ngập lụt và tình trạng ùn tắc giao thông ảnh hưởng như thế nào đến thu nhập của tài xế. Việc áp dụng chính sách giá linh động (tăng thu nhập tài xế, ưu đãi) dựa trên chỉ số thời tiết thời gian thực giúp giảm tỷ lệ huỷ đơn và tăng sự hài lòng của khách hàng thế nào?**
 - S (Cụ thể): Kết hợp mô hình giá linh động với ưu đãi tài xế (Rainy-day
 Incentives) tại các vùng có chỉ số ngập lụt cao.
 - M (Đo lường được): Tỷ lệ hủy đơn, thu nhập trung bình mỗi tài xế trong giờ
-mưa, điểm hài lòng của khách hàng (CSAT).
+mưa, điểm hài lòng của khách hàng.
 - A (Khả thi): Sử dụng dữ liệu bản đồ ngập lụt 2025 từ Sở GTVT kết hợp với
 dữ liệu thời tiết lịch sử.
 - R (Phù hợp): Giải quyết bài toán giữ chân tài xế trong điều kiện thời tiết bất
 lợi - yếu tố sống còn với startup logistics.
-- T (Thời hạn): Mùa mưa 2025 - khung thời gian thực tế để kiểm định giả
+- T (Thời hạn): Mùa mưa 2026 - khung thời gian thực tế để kiểm định giả
 thuyết.
 
-**3. Làm thế nào để giảm 10% quãng đường vận chuyển thực tế (shippingDistance)
+**3. Làm thế nào để giảm 10% quãng đường vận chuyển thực tế
 thông qua việc điều hướng tránh các điểm ngập lụt tại TP.HCM vào mùa mưa
 2024?**
 - S (Cụ thể): Giảm quãng đường vận chuyển thực tế bằng cách tích hợp dữ
