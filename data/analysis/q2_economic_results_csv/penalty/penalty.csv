@@ -1,0 +1,5 @@
+context_segment,order_volume,avg_time_mins,income_per_min_raw,avg_traffic
+normal,1581,324.51,266.53,3.15
+rain_flood,78,398.65,256.91,3.82
+rain_only,554,339.0,228.93,3.59
+flood_only,190,349.24,187.41,3.5

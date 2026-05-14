@@ -135,9 +135,13 @@ def transform_weather(spark, path):
     # HEAVY RAIN FLAG (EDA-DRIVEN)
     # ==============================
     df = df.withColumn(
-        "is_heavy_rain",
-        when(col("prcp_mm") > 5, 1).otherwise(0)
-    )
+    "is_heavy_rain",
+    when(
+        (col("prcp_mm") > 5) | 
+        (col("condition_label").isin("Heavy Rain", "Heavy Rain Shower", "Light Rain", "Rain", "Rain Shower")), 
+        1
+    ).otherwise(0)
+)
 
     # ==============================
     # JOIN KEY (HOURLY)

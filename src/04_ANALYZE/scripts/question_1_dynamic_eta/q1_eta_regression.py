@@ -62,7 +62,11 @@ df = df.withColumn(
 # ---- Rain (secondary signal) ----
 df = df.withColumn(
     "is_heavy_rain",
-    when(col("prcp_mm") > 5, 1).otherwise(0)
+    when(
+        (col("prcp_mm") > 5) | 
+        (col("condition_label").isin("Heavy Rain", "Heavy Rain Shower", "Light Rain", "Rain", "Rain Shower")), 
+        1
+    ).otherwise(0)
 )
 
 # ---- Flood (primary risk driver from EDA) ----
@@ -95,8 +99,9 @@ df = df.withColumn(
 # Flood dominates rain → segmentation prioritizes flood
 df = df.withColumn(
     "context_segment",
-    when(col("has_flood") == 1, "flood")
-    .when(col("is_heavy_rain") == 1, "rain_only")
+    when((col("has_flood") == 1) & (col("is_heavy_rain") == 1), "rain_flood")
+    .when((col("has_flood") == 1), "flood_only")
+    .when((col("is_heavy_rain") == 1), "rain_only")
     .otherwise("normal")
 )
 
@@ -195,7 +200,7 @@ def train_model(service, context):
 # 9. RUN EXPERIMENTS
 # =========================================================
 for svc in ["3h", "5h"]:
-    for ctx in ["normal", "rain_only", "flood"]:
+    for ctx in ["normal", "rain_only", "flood_only", "rain_flood"]:
         train_model(svc, ctx)
 
 # =========================================================
