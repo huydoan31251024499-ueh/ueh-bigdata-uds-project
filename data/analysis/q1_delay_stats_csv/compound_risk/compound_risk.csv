@@ -1,0 +1,5 @@
+risk_segment,order_volume,avg_delay_min,avg_traffic_index,late_probability_pct
+STRESS_Flood_Only,260,-61.01,3.62,24.23
+NORMAL,2045,-67.83,3.21,18.34
+HIGH_Rain_Only,41,-124.66,4.76,4.88
+CRITICAL_Rain_Flood,1,,4.78,0.0

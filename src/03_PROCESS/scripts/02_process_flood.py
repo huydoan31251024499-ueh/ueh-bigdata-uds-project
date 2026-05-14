@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
-    avg, col, from_utc_timestamp, to_timestamp,
-    date_trunc
+    avg, col, from_utc_timestamp, to_timestamp, 
+    date_trunc, count, lit
 )
 from pyspark.sql.types import *
 import logging
@@ -51,27 +51,22 @@ def get_flood_schema():
 def transform_flood(df):
     return (
         df
-        # Convert timestamp UTC → UTC+7
+        # 1. Chuyển timestamp sang UTC+7 [4]
         .withColumn(
-            "timestamp",
-            from_utc_timestamp(to_timestamp(col("timestamp")),
-                               "Asia/Ho_Chi_Minh")
+            "timestamp", 
+            from_utc_timestamp(to_timestamp(col("timestamp")), "Asia/Ho_Chi_Minh")
         )
-
-        # Filter GPS HCM
+        # 2. Lọc GPS HCM chuẩn (10.4-11.2) [1]
         .filter(col("lat").between(10.4, 11.2))
         .filter(col("lng").between(106.3, 107.1))
-
-        # Keep trusted data only
+        # 3. Giữ nguồn tin cậy [1]
         .filter((col("verified") == True) | col("source").isin("iot", "station"))
-
-        # Feature: severity score
+        # 4. Feature: severity score [1]
         .withColumn(
             "severity_score",
             col("depth_cm") * 0.7 + col("duration_min") * 0.3
         )
-
-        # Hour key for join
+        # 5. Hour key for temporal join [1, 5]
         .withColumn(
             "hour_timestamp",
             date_trunc("hour", col("timestamp"))
@@ -79,16 +74,19 @@ def transform_flood(df):
     )
 
 # ==============================
-# AGGREGATION (FIXED)
+# AGGREGATION (CẬP NHẬT: GIỮ DỮ LIỆU KHÔNG GIAN)
 # ==============================
 def aggregate_flood(df):
+    # Thay vì chỉ groupBy hour, ta groupBy cả tọa độ để giữ dữ liệu không gian
     return (
-        df.groupBy("hour_timestamp")
+        df.groupBy("hour_timestamp", "street", "district", "lat", "lng")
         .agg(
             avg("depth_cm").alias("flood_avg_depth_cm"),
             avg("severity_score").alias("flood_avg_severity"),
-            avg("duration_min").alias("flood_avg_duration")
+            avg("duration_min").alias("flood_avg_duration"),
+            count("flood_id").alias("point_report_count")
         )
+        .withColumn("has_flood", lit(1))
     )
 
 # ==============================
@@ -96,11 +94,8 @@ def aggregate_flood(df):
 # ==============================
 def main():
     spark = get_spark()
-
     try:
         logger.info("Loading RAW flood data...")
-
-        # ✅ FIX: đọc đúng file (KHÔNG phải folder flood)
         df = spark.read.csv(
             f"{HDFS_RAW}/hcmc_flood_points_raw.csv",
             header=True,
@@ -110,38 +105,29 @@ def main():
         logger.info("Transforming flood data...")
         df_clean = transform_flood(df)
 
-        logger.info("Aggregating flood hourly...")
+        logger.info("Aggregating flood hourly with spatial features...")
         df_agg = aggregate_flood(df_clean)
 
         logger.info("Writing to HDFS...")
+        # Lưu bản sạch chi tiết
+        df_clean.write.mode("overwrite").parquet(f"{HDFS_PROCESSED}/flood")
+        # Lưu bản tổng hợp nhưng có tọa độ để tính Distance sau này
+        df_agg.write.mode("overwrite").parquet(f"{HDFS_PROCESSED}/flood_hourly")
 
-        df_clean.write.mode("overwrite").parquet(
-            f"{HDFS_PROCESSED}/flood"
-        )
-
-        df_agg.write.mode("overwrite").parquet(
-            f"{HDFS_PROCESSED}/flood_hourly"
-        )
-
-        # Save CSV for debug
-        df_clean.coalesce(1).write.mode("overwrite") \
-            .option("header", "true") \
+        # Lưu CSV phục vụ debug/kiểm tra [6, 7]
+        df_clean.coalesce(1).write.mode("overwrite").option("header", "true") \
             .csv("file:///app/data/processed/flood_csv")
-
-        df_agg.coalesce(1).write.mode("overwrite") \
-            .option("header", "true") \
+        
+        df_agg.coalesce(1).write.mode("overwrite").option("header", "true") \
             .csv("file:///app/data/processed/flood_hourly_csv")
 
-
-        logger.info("✅ DONE: flood + flood_hourly saved")
+        logger.info("DONE: flood + flood_hourly (with spatial data) saved")
 
     except Exception as e:
-        logger.error(f"❌ Job failed: {e}")
+        logger.error(f"Job failed: {e}")
         raise
-
     finally:
         spark.stop()
-
 
 if __name__ == "__main__":
     main()

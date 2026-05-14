@@ -1,0 +1,7 @@
+serviceType,rain_level,late_order_count,avg_flood_severity_at_delivery
+3h,no_rain,225,5.55
+3h,light,123,2.65
+5h,no_rain,59,7.61
+5h,light,23,0.0
+3h,moderate,9,9.03
+3h,heavy,1,0.0
