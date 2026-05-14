@@ -3,27 +3,214 @@
 Giai đoạn **SHARE** là bước chuyển hóa các kết quả từ công cụ tính toán phân tán (Spark) thành các câu chuyện bằng hình ảnh (Data Storytelling) để Xe Dù (UDS) ra quyết định chiến lược. Dựa trên cấu trúc thư mục kết quả phân tích và các chỉ số khoa học đã đạt được, dưới đây là định hướng trực quan hóa chi tiết:
 
 ### 1. Trực quan hóa SMART Q1: Xác định và Dự báo nguy cơ trễ đơn
-Dựa vào các tệp tin trong `data/analysis/q1/`:
-*   **Heatmap "Điểm đen" rủi ro (Hotspots):** Sử dụng dữ liệu từ `hotspots.csv` để hiển thị mật độ các vùng có xác suất trễ đơn cao nhất tại TP.HCM,. Bản đồ này cần nhấn mạnh sự chồng lấp giữa **159 điểm ngập** và các khu vực có `late_rate` vọt lên **24.23%** (đặc biệt là nhóm `flood_only`), .
-*   **Biểu đồ phân đoạn rủi ro (Compound Risk):** Dùng biểu đồ cột chồng (Stacked Bar) từ `compound_risk.csv` để so sánh tỷ lệ trễ giữa các phân đoạn: Bình thường, Mưa lớn, và Ngập lụt,. 
-*   **Insight cần nhấn mạnh:** Mô hình ML đã đạt **RMSE ~38-40 phút**, cho phép UDS hiển thị cảnh báo "Nguy cơ trễ đơn cao" trên Dashboard vận hành ngay khi nhận tín hiệu từ trạm quan trắc, .
+Dựa trên các tệp trong `data/analysis/q1/`, mục tiêu của trực quan hóa là **chứng minh ngập lụt (flood) mới là yếu tố quyết định rủi ro trễ đơn, không phải mưa đơn thuần**.
 
-### 2. Trực quan hóa SMART Q2: Mối quan hệ Kinh tế và Thu nhập tài xế
-Dựa vào các tệp tin trong `data/analysis/q2/`:
-*   **Waterfall Chart "Hình phạt kinh tế" (Penalty):** Trực quan hóa từ `penalty.csv` để cho thấy thu nhập mỗi phút (`income_per_min`) bị sụt giảm từ mức nền **266 VND/phút** xuống còn **187 VND/phút** (giảm ~30%) khi đi vào vùng ngập .
-*   **Biểu đồ so sánh Hiệu quả trợ giá (Simulation):** Sử dụng biểu đồ cột đôi từ `simulation.csv` để so sánh thu nhập thực tế và thu nhập sau khi áp dụng **Hệ số nhân phí 1.5x** . Cần nhấn mạnh việc thu nhập tăng lên **385 VND/phút** chính là động lực kinh tế giữ chân tài xế (Risk Premium) .
-*   **Insight cần nhấn mạnh:** Chính sách giá linh động không chỉ là tăng giá mà là công cụ **cân bằng cung - cầu** dựa trên rủi ro vật lý của lộ trình, .
+***
 
-### 3. Trực quan hóa SMART Q3: Hiệu quả lộ trình và Quãng đường thực tế
-Dựa vào các tệp tin trong `data/analysis/q3/`:
-*   **Biểu đồ Radar "Hiệu suất vận hành" (Efficiency):** Sử dụng dữ liệu từ `efficiency.csv` để so sánh chỉ số hiệu quả (Km/phút) giữa các phân đoạn. Nhấn mạnh việc ngập lụt làm tê liệt vận tốc khiến hiệu suất giảm từ **88 xuống 61** (~30%) dù quãng đường lý thuyết có thể ngắn hơn, .
-*   **Biểu đồ tán xạ (Scatter Plot) Tương quan:** Trực quan hóa từ `correlation.csv` để chỉ ra rằng độ sâu ngập có mối quan hệ phi tuyến tính với thời gian giao hàng (vượt ngưỡng 20cm là gây tắc nghẽn hoàn toàn), .
-*   **Insight cần nhấn mạnh:** Sự lãng phí quãng đường (Detour Index) phát sinh do shipper thiếu thông tin điều hướng, tạo tiền đề cho tính năng **A3 (Flood-Aware Routing)** để giảm 10% quãng đường vận chuyển,, .
+#### 1.1. Biểu đồ phân đoạn rủi ro trễ đơn theo bối cảnh (Compound Risk)
 
-### 4. Công nghệ phân tán sử dụng trong bước SHARE
-Để đảm bảo tính nhất quán (Veracity) và khả năng mở rộng (Scalability), nhóm nên sử dụng:
-*   **Spark SQL làm Query Engine:** Kết nối trực tiếp các tệp Parquet/CSV trên HDFS với công cụ BI (Looker Studio/Power BI) thông qua JDBC/ODBC để thực hiện các truy vấn gộp thời gian thực,,.
-*   **Spark Streaming & Kafka (Mô phỏng):** Nếu muốn trình bày Dashboard thời gian thực cho tính năng **A1**, nhóm sử dụng Spark Streaming để đẩy dữ liệu dự báo từ mô hình ETA liên tục lên giao diện Share,,.
-*   **HDFS làm lớp lưu trữ bền vững:** Toàn bộ dữ liệu trực quan được truy xuất từ lớp `processed` và `joined` đã được làm sạch, đảm bảo tính xác thực của Insights,.
+**Nguồn dữ liệu:** `compound_risk.csv`
 
-**Kết luận:** Bước SHARE không chỉ là báo cáo số liệu mà là bằng chứng định lượng để chứng minh rằng bộ 3 tính năng **A1 (Dashboard ETA), A2 (Dynamic Pricing) và A3 (Điều hướng tránh ngập)** là giải pháp sống còn cho UDS vào mùa mưa 2026, .
+**Loại biểu đồ:** Bar chart (cột đơn, không stacked)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `risk_segment`
+*   Metric: `late_probability_pct`
+*   Metric phụ (tooltip): `avg_traffic_index`, `order_volume`
+
+**Insight làm rõ:**
+
+*   Nhóm `STRESS_Flood_Only` có **xác suất trễ đơn cao nhất (\~24.23%)**
+*   Cao hơn đáng kể so với `HIGH_Rain_Only` (\~4.88%)
+*   Chứng minh rằng **ngập lụt độc lập với mưa vẫn tạo rủi ro trễ cao**
+
+***
+
+#### 1.2. Biểu đồ ảnh hưởng của mưa đến tỷ lệ trễ theo loại dịch vụ (Rain Impact)
+
+**Nguồn dữ liệu:** `rain_impact.csv`
+
+**Loại biểu đồ:** Grouped bar chart
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `rain_level`
+*   Breakdown dimension: `serviceType` (3h, 5h)
+*   Metric: `late_rate_percentage`
+
+**Insight làm rõ:**
+
+*   Mưa lớn **không làm tỷ lệ trễ tăng đột biến**
+*   Dịch vụ 3h nhạy cảm hơn 5h, nhưng **rain\_level không giải thích được các trường hợp trễ nghiêm trọng**
+*   Loại bỏ giả định “mưa lớn ⇒ trễ đơn”
+
+***
+
+#### 1.3. Biểu đồ điểm nóng trễ đơn gắn với mức độ ngập (Flood Hotspots)
+
+**Nguồn dữ liệu:** `hotspots.csv`
+
+**Loại biểu đồ:** Bubble chart (hoặc Geo Map nếu mở rộng lat/lng)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `rain_level`
+*   Metric: `late_order_count`
+*   Bubble size / color: `avg_flood_severity_at_delivery`
+*   Filter: `serviceType = '3h'`
+
+**Insight làm rõ:**
+
+*   Nhiều đơn trễ xảy ra trong điều kiện **không mưa hoặc mưa nhẹ nhưng mức độ ngập cao**
+*   Xác nhận sự **tách biệt giữa rain và flood trong cơ chế gây trễ**
+
+***
+
+### 2. Trực quan hóa SMART Q2: Phân tích tác động kinh tế lên thu nhập tài xế
+
+Dựa trên các tệp trong `data/analysis/q2/`, mục tiêu trực quan hóa là **chứng minh “hình phạt kinh tế” mà tài xế phải chịu trong điều kiện ngập lụt và vai trò của thời gian giao hàng đối với thu nhập hiệu quả**.
+
+***
+
+#### 2.1. Biểu đồ thu nhập hiệu quả theo bối cảnh vận hành (Economic Penalty)
+
+**Nguồn dữ liệu:** `penalty.csv` 
+
+**Loại biểu đồ:** Bar chart (cột đơn)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `context_segment`
+*   Metric: `income_per_min_raw`
+*   Metric phụ (tooltip): `avg_time_mins`, `order_volume`, `avg_traffic`
+
+**Insight làm rõ:**
+
+*   `flood_only` có **thu nhập thấp nhất (\~187 VND/phút)**
+*   Giảm khoảng **30% so với điều kiện normal (266 VND/phút)**
+*   `rain_only` giảm nhẹ hơn (\~229 VND/phút)
+
+#### 2.2. Biểu đồ so sánh thời gian giao hàng và thu nhập hiệu quả
+
+**Nguồn dữ liệu:** `penalty.csv`
+
+**Loại biểu đồ:** Scatter plot
+
+**Cấu hình đề xuất:**
+
+*   X-axis: `avg_time_mins`
+*   Y-axis: `income_per_min_raw`
+*   Color / Dimension: `context_segment`
+*   Size (optional): `order_volume`
+
+**Insight làm rõ:**
+
+*   Các bối cảnh có **thời gian giao hàng cao hơn** đi kèm với **thu nhập/phút thấp hơn**
+*   Xác nhận mối quan hệ kinh tế:
+
+        Time ↑  →  Income efficiency ↓
+
+#### 2.3. Biểu đồ mô phỏng thu nhập trước và sau can thiệp (Simulation Overview)
+
+**Nguồn dữ liệu:** `simulation.csv`
+
+**Loại biểu đồ:** Grouped bar chart (Before vs After)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `context_segment`
+*   Metric 1: `old_income_min`
+*   Metric 2: `new_income_min`
+
+**Insight làm rõ:**
+
+*   Trong dữ liệu mô phỏng:
+    *   `rain_only` và `rain_flood` cho thấy **khả năng phục hồi thu nhập**
+    *   `flood_only` **không được cải thiện**, cho thấy đây là **blind spot của hệ thống hiện tại**
+
+
+### 3. Trực quan hóa SMART Q3: Phân tích không gian – hiệu quả lộ trình
+
+Dựa trên các tệp trong `data/analysis/q3/`, mục tiêu của trực quan hóa là **chứng minh rằng ngập lụt làm giảm hiệu quả vận hành thông qua thời gian, chứ không phải do quãng đường tăng**.
+
+***
+
+#### 3.1. Biểu đồ so sánh quãng đường danh nghĩa theo bối cảnh (Distance Stability)
+
+**Nguồn dữ liệu:** `distance.csv` / `summary.csv`
+
+**Loại biểu đồ:** Bar chart (cột đơn)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `context_segment`
+*   Metric: `avg_distance_km`
+
+**Insight làm rõ:**
+
+*   Quãng đường danh nghĩa **gần như không thay đổi đáng kể** giữa các bối cảnh:
+    *   `normal` ≈ 10,219 m
+    *   `rain_only` ≈ 10,531 m
+    *   `flood_only` ≈ 9,889 m
+
+***
+
+#### 3.2. Biểu đồ so sánh thời gian vận chuyển theo bối cảnh (Time Impact)
+
+**Nguồn dữ liệu:** `duration.csv` / `summary.csv`
+
+**Loại biểu đồ:** Bar chart (cột đơn)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `context_segment`
+*   Metric: `avg_duration_min`
+
+**Insight làm rõ:**
+
+*   Thời gian giao hàng **tăng mạnh** trong điều kiện bất lợi:
+    *   `normal`: \~320 phút
+    *   `rain_only`: \~444 phút
+    *   `flood_only`: \~365 phút
+
+***
+
+#### 3.3. Biểu đồ hiệu quả lộ trình theo bối cảnh (Route Efficiency – Quan trọng nhất)
+
+**Nguồn dữ liệu:** `efficiency.csv` / `summary.csv`
+
+**Loại biểu đồ:** Bar chart (cột đơn, highlight `flood_only`)
+
+**Cấu hình đề xuất:**
+
+*   Dimension: `context_segment`
+*   Metric: `avg_efficiency` (distance / time)
+
+**Insight làm rõ:**
+
+*   Hiệu quả vận hành giảm mạnh trong `flood_only`:
+    *   `normal`: \~88
+    *   `rain_only`: \~88
+    *   `flood_only`: **\~62 (giảm \~30%)**
+
+
+***
+
+#### 3.4. Biểu đồ tương quan mức độ ngập và thời gian (Correlation Evidence – phụ trợ)
+
+**Nguồn dữ liệu:** `correlation.csv`
+
+**Loại biểu đồ:** Scorecard hoặc Scatter plot (nếu mở rộng)
+
+**Cấu hình đề xuất:**
+
+*   Metric: `corr_severity_duration`
+
+**Insight làm rõ:**
+
+*   `corr_severity_duration ≈ 0.003` → **gần như không có tương quan tuyến tính**
+
+---
+
+**Kết luận:** Bước SHARE không chỉ là báo cáo số liệu mà là bằng chứng định lượng để chứng minh rằng bộ 3 tính năng **A1 (Dashboard ETA), A2 (Dynamic Pricing) và A3 (Điều hướng tránh ngập)** là giải pháp cho UDS vào mùa mưa 2026.
