@@ -30,10 +30,9 @@ Vẽ sơ đồ Data Pipeline (có hình ảnh logo):
 
 ### Slide 4 (ngắn gọn): PROCESS
 *   **Công nghệ PySpark:** 
-    - Liệt kê các bước đã làm: Kiểm tra: Trùng lặp, Giá trị null, Chuẩn hóa Đơn vị (mm, km, phút), Timezone về `Asia/Ho_Chi_Minh`
-*   **Kỹ thuật Join/Merge:** Đảm bảo tất cả dữ liệu có thể **join theo `hour_timestamp`**
-    - **Temporal Joining Key** (Làm tròn thời gian về giờ gần nhất - `hour_timestamp`).
-*   **Schema-on-read:** Sử dụng `StructType` để định nghĩa cấu trúc dữ liệu nghiêm ngặt ngay khi đọc từ HDFS, đảm bảo tính nhất quán (Consistency).
+    - Data cleaning: Trùng lặp, Giá trị null, Chuẩn hóa Đơn vị, Timezone, schema
+*   **Kỹ thuật Join/Merge:** Đảm bảo tất cả dữ liệu rời rạc có thể **join theo `hour_timestamp`**
+
 
 ### Slide 5: Mô hình ETA & Xử lý Train/Test trên HDFS (Q1 Analyze)
 *   Chèn ảnh biểu đồ q1_eda
@@ -42,23 +41,23 @@ Vẽ sơ đồ Data Pipeline (có hình ảnh logo):
 *   Chèn ảnh biểu đồ q1_eta
 *   Kết luận insights
 
-### Slide 7: Dynamic Pricing - Câu chuyện thị trường (Q2 Analyze)
+### Slide 6: Dynamic Pricing - Câu chuyện thị trường (Q2 Analyze)
 *   Chèn ảnh biểu đồ
 *   **Nhấn mạnh:** thu nhập tài xế trong vùng ngập sụt giảm **~30%** (187 VND so với 266 VND/phút) .
 *   Kết luận insights
 
-### Slide 8: Phân tích không gian & Spark GraphX (Q3 Analyze)
+### Slide 7: Phân tích không gian & Spark GraphX (Q3 Analyze)
 *   Chèn biểu đồ q3 khi có
 *   **Hiệu quả lộ trình:** Chứng minh dù quãng đường ngắn hơn nhưng thời gian lâu hơn trong vùng ngập (Hiệu suất giảm từ 88 xuống 61) .
 *   Kết luận insights
 
 
-### Slide 9: Chiến lược ACT - Từ Insights đến Prototype (Giai đoạn ACT)
+### Slide 8: Chiến lược ACT - Từ Insights đến Prototype (Giai đoạn ACT)
 *   **A1 - Dashboard ETA:** Tích hợp dự báo thời gian thực.
 *   **A2 - Dynamic Pricing:** Tự động điều chỉnh thưởng tài xế, ưu đãi
 *   **A3 - Smart Routing:** Tối ưu hóa đường đi điều hướng tránh điểm ngập.
 
-### Slide 10: Định hướng dự án (Giai đoạn ACT)
+### Slide 9: Định hướng dự án (Giai đoạn ACT)
 
 ## Limitations
 *   Giải quyết 3 bài toán cùng lúc
@@ -68,4 +67,6 @@ Vẽ sơ đồ Data Pipeline (có hình ảnh logo):
 *   Real-time pipeline (Kafka + Spark Streaming)
 *   Graph-based routing (GraphX – Safe Path)
 *   Design Thinking validation (user testing)
-> Towards MVP System
+*   Towards MVP System
+
+## TÀI LIỆU THAM KHẢO (APA 7)
