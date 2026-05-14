@@ -1,0 +1,5 @@
+context_segment,volume,avg_distance_km,avg_duration_min,avg_efficiency,avg_traffic
+rain_flood,1,2113.0,21.1,100.1422,4.78
+normal,1995,10219.27,320.44,88.1815,3.1
+rain_only,135,10530.92,444.18,87.8503,5.76
+flood_only,264,9888.93,365.08,61.9725,3.59

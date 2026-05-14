@@ -59,7 +59,7 @@ lợi - yếu tố sống còn với startup logistics.
 - T (Thời hạn): Mùa mưa 2026 - khung thời gian thực tế để kiểm định giả
 thuyết.
 
-**3. Làm thế nào để giảm 10% quãng đường vận chuyển thực tế thông qua việc điều hướng tránh các điểm ngập lụt tại TP.HCM vào mùa mưa 2024?**
+**3. Mối quan hệ giữa các điểm ngập lụt và hiệu quả lộ trình, quãng đường và thời gian vận chuyển thực tế tại TP.HCM vào mùa mưa 2023-2024 là gì?**
 - S (Cụ thể): Giảm quãng đường vận chuyển thực tế bằng cách tích hợp dữ
 liệu điểm ngập vào thuật toán điều hướng.
 - M (Đo lường được): So sánh shippingDistance thực tế với khoảng cách tuyến

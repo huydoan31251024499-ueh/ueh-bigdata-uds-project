@@ -11,12 +11,15 @@
 - Phân tích dữ liệu thực tế cho thấy thu nhập hiệu quả của tài xế giảm mạnh nhất trong các tình huống ngập lụt không đi kèm mưa (flood-only), với mức suy giảm lên tới khoảng 30% so với điều kiện bình thường. Điều này chứng minh rằng hình phạt kinh tế trong vận hành đô thị không xuất phát trực tiếp từ mưa, mà từ trạng thái ngập tích tụ của hạ tầng. Kết quả này cung cấp cơ sở định lượng rõ ràng để thiết kế các cơ chế điều tiết phù hợp trong pha ACT, nhằm ổn định thu nhập tài xế và giảm tỷ lệ hủy đơn trong các điều kiện bất lợi.
 
 
+- Phân tích cho thấy ngập lụt không làm thay đổi đáng kể quãng đường danh nghĩa nhưng làm tăng thời gian vận chuyển và giảm hiệu quả lộ trình thông qua các gián đoạn không gian. Trong khi thời tiết mưa gây slowdown mang tính toàn cục, ngập lụt tạo ra sự không hiệu quả mang tính cục bộ và phi tuyến. Điều này khẳng định rằng vấn đề vận hành trong môi trường đô thị không nằm ở độ dài lộ trình, mà ở sự suy giảm khả năng di chuyển thực tế do yếu tố không gian.
+
+
 # 2. Đề xuất giải pháp
 
 **Các SMART Questions ban đầu:**
 - **Q1:** Làm thế nào để xác định và dự báo được nguy cơ giao hàng trễ (delay_min > 0) đối với các dịch vụ giao hàng nhanh 3h và 5h của UDS trong các điều kiện mưa lớn (lượng mưa > 5mm) tại khu vực có nguy cơ ngập lụt tại TP.HCM? giai đoạn 2023-2024?
 - **Q2:** Mối quan hệ giữa lượng mưa, mức độ ngập lụt và tình trạng ùn tắc giao thông ảnh hưởng như thế nào đến thu nhập của tài xế?
-- **Q3:** Làm thế nào để giảm 10% quãng đường vận chuyển thực tế thông qua việc điều hướng tránh các điểm ngập lụt tại TP.HCM vào mùa mưa 2024?
+- **Q3:** Mối quan hệ giữa các điểm ngập lụt, thời tiết xấu và hiệu quả lộ trình, quãng đường và thời gian vận chuyển thực tế tại TP.HCM vào mùa mưa 2023-2024 là gì?
 
 **Ứng dụng Xe Dù UDS, kết hợp 3 tính năng cốt lõi:**
 - **A1:** Hệ thống Dashboard thời gian thực dự đoán ETA bằng mô hình Machine Learning thông qua việc kết hợp phân tích dữ liệu lịch sử và dữ liệu thời gian thực (API) về thời tiết, giao thông và ngập lụt trong giai đoạn vận hành 3 tháng mùa mưa 2026.
