@@ -39,7 +39,7 @@ xế hạn chế, từ đó xây dựng một hệ thống logistics có khả n
 Đặt 3 câu hỏi mục tiêu về: Tỷ lệ hủy đơn, Thu nhập tài xế và Quãng đường vận chuyển tối
 ưu.
 
-**1. Làm thế nào để dự báo chính xác thời gian giao hàng thực tế và giảm ít nhất 20% độ trễ so với ETA cam kết (delay_min) trong các khung giờ mưa lớn (lượng mưa > 5mm) tại các khu vực có nguy cơ ngập lụt cao ở TP.HCM trong vòng 3 tháng tới, thông qua việc tự động điều chỉnh ETA dựa trên dữ liệu thời tiết, giao thông và ngập lụt?**
+**1. Làm thế nào để xác định và dự báo được nguy cơ giao hàng trễ (delay_min > 0) đối với các dịch vụ giao hàng nhanh 3h và 5h của UDS trong các điều kiện mưa lớn (lượng mưa > 5mm) tại khu vực có nguy cơ ngập lụt tại TP.HCM, thông qua việc kết hợp phân tích dữ liệu lịch sử và mô hình dự báo ETA dựa trên thời tiết, giao thông và ngập lụt trong giai đoạn vận hành 3 tháng tiếp theo?**
 
 - Specific: tập trung vào delay_min, ETA, mưa > 5mm, vùng ngập
 - Measurable: giảm 20% độ trễ trung bình
@@ -59,9 +59,7 @@ lợi - yếu tố sống còn với startup logistics.
 - T (Thời hạn): Mùa mưa 2026 - khung thời gian thực tế để kiểm định giả
 thuyết.
 
-**3. Làm thế nào để giảm 10% quãng đường vận chuyển thực tế
-thông qua việc điều hướng tránh các điểm ngập lụt tại TP.HCM vào mùa mưa
-2024?**
+**3. Làm thế nào để giảm 10% quãng đường vận chuyển thực tế thông qua việc điều hướng tránh các điểm ngập lụt tại TP.HCM vào mùa mưa 2024?**
 - S (Cụ thể): Giảm quãng đường vận chuyển thực tế bằng cách tích hợp dữ
 liệu điểm ngập vào thuật toán điều hướng.
 - M (Đo lường được): So sánh shippingDistance thực tế với khoảng cách tuyến

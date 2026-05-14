@@ -1,4 +1,4 @@
-# Giai đoạn ANALYZE (Phân tích dữ liệu)
+# Giai đoạn ANALYZE - PHÂN TÍCH DỮ LIỆU
 
 ### 1. Phân tích Dự báo Độ trễ và Tối ưu ETA (SMART Question 1)
 *   **Bài toán:** **Dự báo (Prediction)** và **Hồi quy (Regression)**.
