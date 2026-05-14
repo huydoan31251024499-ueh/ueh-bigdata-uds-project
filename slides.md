@@ -59,11 +59,11 @@ Vẽ sơ đồ Data Pipeline (có hình ảnh logo):
 
 ### Slide 9: Định hướng dự án (Giai đoạn ACT)
 
-## Limitations
+**Limitations**
 *   Giải quyết 3 bài toán cùng lúc
-*   Hạn chế dữ liệu để train model. không có GPS path, Q3 bị giới hạn
+*   Hạn chế dữ liệu để train model
 
-## Future work
+**Future work**
 *   Real-time pipeline (Kafka + Spark Streaming)
 *   Graph-based routing (GraphX – Safe Path)
 *   Design Thinking validation (user testing)
