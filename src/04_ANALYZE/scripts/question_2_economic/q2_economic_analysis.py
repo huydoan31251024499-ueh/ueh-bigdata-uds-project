@@ -55,7 +55,7 @@ def main():
 
         # =========================================================
         # MÔ PHỎNG GIÁ LINH ĐỘNG (ACT PREVIEW)
-        # Hệ số nhân dựa trên độ khó vật lý thực tế: Flood (0.4) + Traffic (0.4) [History]
+        # Hệ số nhân dựa trên độ khó vật lý thực tế: Flood (0.4) + Traffic (0.4)
         # =========================================================
         simulation = spark.sql("""
             SELECT 
