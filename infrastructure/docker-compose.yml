@@ -48,6 +48,7 @@ services:
       - "7077:7077" # Spark Cluster URL
     volumes:
       - ./:/app
+      - ./:/home/jovyan/work
 
   spark-worker:
     image: apache/spark:3.5.1
@@ -57,10 +58,23 @@ services:
       - spark-master
     volumes:
       - ./:/app
+      - ./:/home/jovyan/work
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.2
+    container_name: ueh-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
     image: confluentinc/cp-kafka:7.3.2
+    container_name: ueh-kafka
     ports:
       - "9092:9092"
+    depends_on:
+      - zookeeper # Đảm bảo Zookeeper phải lên trước để quản lý Kafka
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -68,6 +82,18 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  jupyter:
+    image: jupyter/pyspark-notebook:latest
+    container_name: ueh-bigdata-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./src:/home/jovyan/work
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    depends_on:
+      - spark-master
 
 volumes:
   hadoop_namenode:
