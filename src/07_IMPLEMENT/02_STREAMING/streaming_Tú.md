@@ -1,4 +1,4 @@
-### **CHƯƠNG 2 & 4: ĐẶC TẢ KỸ THUẬT PHÂN VÙNG XỬ LÝ VÀ SUY LUẬN DÒNG**
+### **CHƯƠNG 2 & 4: KỸ THUẬT STREAMING**
 
 **Thành viên thực hiện:** Đinh Nguyễn Tuấn Tú
 
@@ -68,5 +68,5 @@ Sử dụng **Spark Structured Streaming** để xử lý bảng không giới h
 
 ### Sản phẩm bàn giao
 
-1. **Mã nguồn:** Các tệp tin `order_simulator.py`, `schemas.py`, và `spark_streaming.py` vận hành mượt mà, không xung đột kiểu dữ liệu. **Hạn chót: 09/06**.
-2. **Tài liệu viết tiểu luận:** Bản thảo **Chương 4 (Đặc tả thuật toán phân đoạn và cơ chế Model Gating trên RAM)**. Nội dung viết theo văn phong học thuật, giải thích rõ cơ chế chuyển dịch từ mô hình Offline sang Online Inference. **Hạn chót phần viết: 11/06**.
+1. **Mã nguồn:** Các tệp tin `order_simulator.py`, `schemas.py`, và `spark_streaming.py`. **Hạn chót: 09/06**.
+2. **Tài liệu viết tiểu luận:** Bản thảo **Chương 4**. **Hạn chót: 11/06**.
