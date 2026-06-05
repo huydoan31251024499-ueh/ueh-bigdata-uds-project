@@ -1,4 +1,4 @@
-### **CHƯƠNG 2 & 4: KỸ THUẬT STREAMING**
+### **CHƯƠNG 2 & 4: KỸ THUẬT STREAMING **
 
 **Thành viên thực hiện:** Đinh Nguyễn Tuấn Tú
 
