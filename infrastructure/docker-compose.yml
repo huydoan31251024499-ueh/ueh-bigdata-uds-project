@@ -1,12 +1,12 @@
 services:
-  # --- HADOOP (HDFS & YARN) ---
+  #  HADOOP (HDFS & YARN) 
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
     restart: always
     ports:
-      - "9870:9870" # NameNode Web UI
-      - "9000:9000" # HDFS RPC
+      - "9870:9870"
+      - "9000:9000"
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
       - ./:/app
@@ -33,7 +33,7 @@ services:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
     ports:
-      - "8088:8088" # YARN Web UI
+      - "8088:8088"
     env_file:
       - ./hadoop.env
     platform: linux/amd64
@@ -44,11 +44,10 @@ services:
     container_name: spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
-      - "8080:8080" # Spark Master Web UI
-      - "7077:7077" # Spark Cluster URL
+      - "8080:8080"
+      - "7077:7077"
     volumes:
       - ./:/app
-      - ./:/home/jovyan/work
 
   spark-worker:
     image: apache/spark:3.5.1
@@ -58,10 +57,12 @@ services:
       - spark-master
     volumes:
       - ./:/app
-      - ./:/home/jovyan/work
+
+  #  KAFKA CLUSTER 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.2
-    container_name: ueh-zookeeper
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    restart: always
     ports:
       - "2181:2181"
     environment:
@@ -69,31 +70,37 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7.3.2
-    container_name: ueh-kafka
-    ports:
-      - "9092:9092"
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    restart: always
     depends_on:
-      - zookeeper # Đảm bảo Zookeeper phải lên trước để quản lý Kafka
+      - zookeeper
+    ports:
+      - "29092:29092"   # ngoại vi: máy vật lý Windows (kafka_producers.py)
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      # kafka:9092    → nội bộ Docker network (Spark Structured Streaming)
+      # localhost:29092 → ngoại vi máy vật lý (kafka_producers.py)
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
 
-  jupyter:
-    image: jupyter/pyspark-notebook:latest
-    container_name: ueh-bigdata-jupyter
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./src:/home/jovyan/work
-    environment:
-      - SPARK_MASTER=spark://spark-master:7077
+  # Kafka UI 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: always
     depends_on:
-      - spark-master
+      - kafka
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: uds-kafka
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
 volumes:
   hadoop_namenode:
