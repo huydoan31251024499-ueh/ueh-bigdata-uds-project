@@ -1,10 +1,11 @@
 """
 kafka_producers.py
-
+==================
 Hệ thống nạp dữ liệu đa luồng (Multi-threaded Ingestion) cho UDS Big Data.
 
 Luồng 1 — weather_realtime : Open-Meteo API mỗi 5 phút → topic weather_realtime
-Luồng 2 — order_stream     : Giả lập đơn UDS liên tục   → topic order_stream
+Luồng 2 — order_stream     : Đọc file JSON từ order_simulator.py của Tú
+                              → bổ sung trường còn thiếu → topic order_stream
 
 Payload weather : {"timestamp": ISO-8601, "temp": float, "prcp_mm": float, "coco_code": int}
 Payload order   : {"order_id": str, "createdAt": ISO-8601, "weight": float,
@@ -12,13 +13,18 @@ Payload order   : {"order_id": str, "createdAt": ISO-8601, "weight": float,
                    "receiver_lat": float, "receiver_lng": float, "serviceType": str}
 
 Cài thư viện: pip install kafka-python requests
-Chạy        : python kafka_producers.py
+Chạy        : python kafka_producers.py  (chạy song song với order_simulator.py của Tú)
 Dừng        : Ctrl+C
 
+Lưu ý: order_simulator.py của Tú ghi file vào STREAM_INPUT_DIR.
+        kafka_producers.py của Hùng quét thư mục đó, đọc file mới,
+        bổ sung các trường còn thiếu theo schema nhóm trưởng rồi forward vào Kafka.
 """
 
+import glob
 import json
 import logging
+import os
 import random
 import threading
 import time
@@ -37,12 +43,17 @@ from config import (
     LOG_FORMAT, LOG_LEVEL,
 )
 
-#  Logging
+# ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(level=getattr(logging, LOG_LEVEL), format=LOG_FORMAT)
 log = logging.getLogger(__name__)
 
+# ── Thư mục output của order_simulator.py (Tú) ───────────────────────────────
+# Windows path — chỉnh lại nếu Tú chạy trên máy khác
+STREAM_INPUT_DIR = r"C:\bigdata-ueh\stream_input"
+# Fallback: nếu thư mục của Tú chưa có, dùng thư mục local
+STREAM_INPUT_FALLBACK = r"C:\bigdata-ueh\stream_input"
 
-# Tạo Kafka Producer (thread-safe) 
+# ── Tạo Kafka Producer (thread-safe) ─────────────────────────────────────────
 def make_producer() -> KafkaProducer:
     return KafkaProducer(
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
@@ -53,8 +64,9 @@ def make_producer() -> KafkaProducer:
         request_timeout_ms=15000,
     )
 
-
+# ════════════════════════════════════════════════════════════
 #  LUỒNG 1 — WEATHER REALTIME (Open-Meteo API)
+# ════════════════════════════════════════════════════════════
 
 def fetch_weather_payload() -> dict | None:
     """
@@ -114,9 +126,13 @@ def weather_producer_thread(producer: KafkaProducer, stop_event: threading.Event
     log.info("[WeatherProducer] Đã dừng.")
 
 
-#  LUỒNG 2 — ORDER STREAM (giả lập đơn hàng UDS)
+# ════════════════════════════════════════════════════════════
+#  LUỒNG 2 — ORDER STREAM
+#  Đọc file JSON từ order_simulator.py của Tú
+#  Bổ sung trường còn thiếu → forward vào Kafka
+# ════════════════════════════════════════════════════════════
 
-# Bounding box từng quận — khớp với uds_orders_raw.csv
+# Bounding box từng quận — dùng để bổ sung sender/receiver GPS
 DISTRICT_BOXES = {
     "Binh Thanh": ((10.786, 10.820), (106.695, 106.723)),
     "Thu Duc":    ((10.831, 10.869), (106.736, 106.792)),
@@ -131,27 +147,31 @@ DISTRICT_BOXES = {
     "Nha Be":     ((10.680, 10.715), (106.700, 106.728)),
 }
 
-# serviceType và weight khớp đúng với uds_orders_raw.csv
+# serviceType và weight theo phân phối thực tế uds_orders_raw.csv
 SERVICE_CONFIG = {
-    "3h":           {"weight_range": (0.5, 5.0),  "prob": 0.35},
-    "5h":           {"weight_range": (0.5, 10.0), "prob": 0.30},
-    "ban_tai_nhanh":{"weight_range": (5.0, 20.0), "prob": 0.15},
-    "ban_tai_4h":   {"weight_range": (5.0, 30.0), "prob": 0.12},
-    "luu_kho":      {"weight_range": (1.0, 15.0), "prob": 0.08},
+    "3h":            {"weight_range": (0.5, 5.0),  "prob": 0.35},
+    "5h":            {"weight_range": (0.5, 10.0), "prob": 0.30},
+    "ban_tai_nhanh": {"weight_range": (5.0, 20.0), "prob": 0.15},
+    "ban_tai_4h":    {"weight_range": (5.0, 30.0), "prob": 0.12},
+    "luu_kho":       {"weight_range": (1.0, 15.0), "prob": 0.08},
 }
 
-def simulate_order() -> dict:
-    """
-    Sinh đơn hàng UDS giả lập, bảo toàn phân phối thuộc tính lịch sử.
-    Payload đúng theo yêu cầu nhóm trưởng.
-    """
+def random_coords():
+    """Sinh toạ độ ngẫu nhiên trong bounding box một quận ngẫu nhiên."""
     districts = list(DISTRICT_BOXES.keys())
-    sender_d  = random.choice(districts)
-    recv_d    = random.choice(districts)
+    d = random.choice(districts)
+    lat_r, lng_r = DISTRICT_BOXES[d]
+    return round(random.uniform(*lat_r), 6), round(random.uniform(*lng_r), 6)
 
-    slat_r, slng_r = DISTRICT_BOXES[sender_d]
-    rlat_r, rlng_r = DISTRICT_BOXES[recv_d]
+def enrich_order(raw: dict) -> dict:
+    """
+    Nhận dict từ file JSON của Tú, bổ sung các trường còn thiếu
+    để đảm bảo đúng schema nhóm trưởng yêu cầu.
 
+    Tú cung cấp: id, createdAt, distance_km, traffic_congestion_index,
+                 order_hour, prcp_mm, avg_flood_depth_cm, condition_label
+    Cần thêm   : order_id, weight, sender_lat/lng, receiver_lat/lng, serviceType
+    """
     service = random.choices(
         list(SERVICE_CONFIG.keys()),
         weights=[v["prob"] for v in SERVICE_CONFIG.values()],
@@ -159,36 +179,96 @@ def simulate_order() -> dict:
     )[0]
     lo, hi = SERVICE_CONFIG[service]["weight_range"]
 
+    slat, slng = random_coords()
+    rlat, rlng = random_coords()
+
     return {
-        "order_id":     f"UDS-{uuid.uuid4().hex[:10].upper()}",
-        "createdAt":    datetime.now(timezone.utc).isoformat(),
+        # Trường từ simulator của Tú (giữ nguyên)
+        "order_id":   f"UDS-{raw.get('id', uuid.uuid4().hex[:6].upper())}",
+        "createdAt":  raw.get("createdAt", datetime.now(timezone.utc).isoformat()),
+        # Trường bổ sung để đúng schema nhóm trưởng
         "weight":       round(random.uniform(lo, hi), 2),
-        "sender_lat":   round(random.uniform(*slat_r), 6),
-        "sender_lng":   round(random.uniform(*slng_r), 6),
-        "receiver_lat": round(random.uniform(*rlat_r), 6),
-        "receiver_lng": round(random.uniform(*rlng_r), 6),
+        "sender_lat":   slat,
+        "sender_lng":   slng,
+        "receiver_lat": rlat,
+        "receiver_lng": rlng,
         "serviceType":  service,
+        # Giữ context từ Tú để Spark có thể dùng thêm
+        "distance_km":               raw.get("distance_km", 0),
+        "traffic_congestion_index":  raw.get("traffic_congestion_index", 0),
+        "prcp_mm":                   raw.get("prcp_mm", 0),
+        "avg_flood_depth_cm":        raw.get("avg_flood_depth_cm", 0),
+        "condition_label":           raw.get("condition_label", "normal"),
     }
 
 
+def get_stream_dir() -> str:
+    """Trả về thư mục stream đang tồn tại (ưu tiên của Tú, fallback local)."""
+    if os.path.isdir(STREAM_INPUT_DIR):
+        return STREAM_INPUT_DIR
+    os.makedirs(STREAM_INPUT_FALLBACK, exist_ok=True)
+    log.warning("[OrderProducer] Không tìm thấy thư mục của Tú (%s), "
+                "dùng fallback: %s", STREAM_INPUT_DIR, STREAM_INPUT_FALLBACK)
+    return STREAM_INPUT_FALLBACK
+
+
 def order_producer_thread(producer: KafkaProducer, stop_event: threading.Event):
-    log.info("[OrderProducer] Khởi động — gửi mỗi %ds → topic '%s'",
-             ORDER_INTERVAL_SEC, TOPIC_ORDERS)
+    """
+    Quét thư mục stream_input mỗi ORDER_INTERVAL_SEC giây.
+    Mỗi file JSON mới = 1 đơn hàng → enrich → gửi Kafka → xoá file.
+    """
+    stream_dir = get_stream_dir()
+    processed: set = set()   # tránh xử lý lại file cũ nếu chưa xoá được
+
+    log.info("[OrderProducer] Khởi động — quét '%s' mỗi %ds → topic '%s'",
+             stream_dir, ORDER_INTERVAL_SEC, TOPIC_ORDERS)
+
     while not stop_event.is_set():
-        payload = simulate_order()
-        try:
-            producer.send(TOPIC_ORDERS, value=payload).get(timeout=10)
-            log.info("[SUCCESS][OrderProducer] → %s | order_id: %s | service: %-14s | %.2fkg",
-                     TOPIC_ORDERS, payload["order_id"],
-                     payload["serviceType"], payload["weight"])
-        except KafkaError as e:
-            log.error("[OrderProducer] Kafka error: %s", e)
+        pattern = os.path.join(stream_dir, "order_*.json")
+        files   = sorted(glob.glob(pattern))
+
+        if not files:
+            log.debug("[OrderProducer] Chưa có file mới, chờ tiếp…")
+        else:
+            for fpath in files:
+                if fpath in processed:
+                    continue
+                try:
+                    with open(fpath, "r", encoding="utf-8") as f:
+                        raw = json.load(f)
+
+                    payload = enrich_order(raw)
+                    producer.send(TOPIC_ORDERS, value=payload).get(timeout=10)
+                    log.info(
+                        "[SUCCESS][OrderProducer] → %s | order_id: %s | "
+                        "service: %-14s | %.2fkg | ctx: %s",
+                        TOPIC_ORDERS, payload["order_id"],
+                        payload["serviceType"], payload["weight"],
+                        payload["condition_label"]
+                    )
+                    processed.add(fpath)
+
+                    # Xoá file sau khi đã forward vào Kafka thành công
+                    try:
+                        os.remove(fpath)
+                        processed.discard(fpath)
+                    except OSError:
+                        pass   # giữ trong processed để không xử lý lại
+
+                except (json.JSONDecodeError, KeyError) as e:
+                    log.warning("[OrderProducer] File lỗi %s: %s", fpath, e)
+                    processed.add(fpath)
+                except KafkaError as e:
+                    log.error("[OrderProducer] Kafka error: %s", e)
+
         time.sleep(ORDER_INTERVAL_SEC)
 
     log.info("[OrderProducer] Đã dừng.")
 
 
+# ════════════════════════════════════════════════════════════
 #  MAIN
+# ════════════════════════════════════════════════════════════
 
 def main():
     log.info("=" * 62)
@@ -196,10 +276,10 @@ def main():
     log.info("  Broker  : %s", KAFKA_BOOTSTRAP_SERVERS)
     log.info("  Topics  : %s | %s", TOPIC_WEATHER, TOPIC_ORDERS)
     log.info("  Weather : mỗi %d giây (Open-Meteo API)", WEATHER_INTERVAL_SEC)
-    log.info("  Orders  : mỗi %d giây (giả lập UDS)", ORDER_INTERVAL_SEC)
+    log.info("  Orders  : quét file từ order_simulator.py của Tú mỗi %d giây",
+             ORDER_INTERVAL_SEC)
     log.info("=" * 62)
 
-    # Kết nối Kafka Broker
     try:
         producer = make_producer()
         log.info("[INIT] Kết nối Kafka broker thành công → %s",
@@ -211,7 +291,6 @@ def main():
 
     stop_event = threading.Event()
 
-    # Khởi chạy 2 thread song song (đa luồng không đồng bộ)
     t_weather = threading.Thread(
         target=weather_producer_thread,
         args=(producer, stop_event),
