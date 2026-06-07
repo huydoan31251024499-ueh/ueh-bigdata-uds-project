@@ -8,7 +8,7 @@ order_id = 5000
 
 # Tạo sẵn thư mục input stream
 import os
-os.makedirs("/home/dntt/Desktop/stream_input", exist_ok=True)
+os.makedirs(r"C:\bigdata-ueh\stream_input", exist_ok=True)
 
 while True:
     order_id += 1
@@ -48,7 +48,7 @@ while True:
     }
 
     # Xuất file JSON giả lập vào phân vùng hệ thống để Spark quét
-    with open(f"/home/dntt/Desktop/stream_input/order_{order_id}.json", "w") as f:
+    with open(rf"C:\bigdata-ueh\stream_input\order_{order_id}.json", "w") as f:
         json.dump({**order_payload, **weather_payload}, f) # Hợp nhất dữ liệu luồng
 
     print(f"[Sinh Đơn] ID: {order_id} | Bối cảnh: {condition_label} | {distance} km")
