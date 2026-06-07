@@ -13,12 +13,9 @@ Payload order   : {"order_id": str, "createdAt": ISO-8601, "weight": float,
                    "receiver_lat": float, "receiver_lng": float, "serviceType": str}
 
 Cài thư viện: pip install kafka-python requests
-Chạy        : python kafka_producers.py  (chạy song song với order_simulator.py của Tú)
+Chạy        : python kafka_producers.py  (chạy song song với order_simulator.py )
 Dừng        : Ctrl+C
 
-Lưu ý: order_simulator.py của Tú ghi file vào STREAM_INPUT_DIR.
-        kafka_producers.py của Hùng quét thư mục đó, đọc file mới,
-        bổ sung các trường còn thiếu theo schema nhóm trưởng rồi forward vào Kafka.
 """
 
 import glob
@@ -43,17 +40,17 @@ from config import (
     LOG_FORMAT, LOG_LEVEL,
 )
 
-# ── Logging ──────────────────────────────────────────────────────────────────
+# Logging
 logging.basicConfig(level=getattr(logging, LOG_LEVEL), format=LOG_FORMAT)
 log = logging.getLogger(__name__)
 
-# ── Thư mục output của order_simulator.py (Tú) ───────────────────────────────
-# Windows path — chỉnh lại nếu Tú chạy trên máy khác
+# Thư mục output của order_simulator.py
+# Windows path — chỉnh lại nếu chạy trên máy khác
 STREAM_INPUT_DIR = r"C:\bigdata-ueh\stream_input"
 # Fallback: nếu thư mục của Tú chưa có, dùng thư mục local
 STREAM_INPUT_FALLBACK = r"C:\bigdata-ueh\stream_input"
 
-# ── Tạo Kafka Producer (thread-safe) ─────────────────────────────────────────
+# Tạo Kafka Producer (thread-safe)
 def make_producer() -> KafkaProducer:
     return KafkaProducer(
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
@@ -64,9 +61,7 @@ def make_producer() -> KafkaProducer:
         request_timeout_ms=15000,
     )
 
-# ════════════════════════════════════════════════════════════
 #  LUỒNG 1 — WEATHER REALTIME (Open-Meteo API)
-# ════════════════════════════════════════════════════════════
 
 def fetch_weather_payload() -> dict | None:
     """
@@ -126,11 +121,9 @@ def weather_producer_thread(producer: KafkaProducer, stop_event: threading.Event
     log.info("[WeatherProducer] Đã dừng.")
 
 
-# ════════════════════════════════════════════════════════════
 #  LUỒNG 2 — ORDER STREAM
 #  Đọc file JSON từ order_simulator.py của Tú
 #  Bổ sung trường còn thiếu → forward vào Kafka
-# ════════════════════════════════════════════════════════════
 
 # Bounding box từng quận — dùng để bổ sung sender/receiver GPS
 DISTRICT_BOXES = {
@@ -265,10 +258,7 @@ def order_producer_thread(producer: KafkaProducer, stop_event: threading.Event):
 
     log.info("[OrderProducer] Đã dừng.")
 
-
-# ════════════════════════════════════════════════════════════
 #  MAIN
-# ════════════════════════════════════════════════════════════
 
 def main():
     log.info("=" * 62)
