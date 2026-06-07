@@ -1,7 +1,7 @@
-"""
+
 kafka_producers.py
-==================
-Hệ thống nạp dữ liệu đa luồng (Multi-threaded Ingestion) cho UDS Big Data.
+
+Hệ thống nạp dữ liệu đa luồng (Multi-threaded Ingestion)
 
 Luồng 1 — weather_realtime : Open-Meteo API mỗi 5 phút → topic weather_realtime
 Luồng 2 — order_stream     : Đọc file JSON từ order_simulator.py của 
