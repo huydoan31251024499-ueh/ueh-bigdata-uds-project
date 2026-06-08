@@ -1,6 +1,7 @@
 import sys
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, when, date_format
+from pyspark.sql.types import StructType
 
 # Thêm đường dẫn Desktop để Python tìm thấy schemas.py
 sys.path.append("/home/dntt/Desktop")
