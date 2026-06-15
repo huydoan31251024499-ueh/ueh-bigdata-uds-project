@@ -63,9 +63,9 @@
 
 ### PHẦN 6: KẾT LUẬN & VẤN ĐÁP (1 PHÚT + 5 PHÚT)
 
-*   **Slide 16: Định hướng Innovation (Phản hồi nhận xét GV)**
-    *   Kinh tế: Đề xuất **Dynamic Pricing** (nhân hệ số 1.5x-2x) dựa trên "hình phạt kinh tế" 30% thu nhập đã phân tích.
-    *   Kỹ thuật: Ứng dụng **Spark GraphX** để tìm Safe-Path (Lộ trình an toàn) né điểm ngập sâu.
+*   **Slide 16: Hạn chế / Định hướng (Phản hồi nhận xét GV)**
+    *   Hạn chế
+    *   Định hướng
 *   **Slide 17: Q&A**
 
 
