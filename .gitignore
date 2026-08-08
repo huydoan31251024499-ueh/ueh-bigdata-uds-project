@@ -217,7 +217,6 @@ Makefile
 
 # --- Personal Lab Files ---
 lab/
-notebooks/
 
 # --- MacOS Specific ---
 .DS_Store
